@@ -55,9 +55,18 @@ export function clean() {
 //   cb();
 // });
 
-export function copyHTML() {
-    return src('src/**/*.html')
-        .pipe(dest('./dist'))
+export function copyBootstrapIcons() {
+    return src('node_modules/bootstrap-icons/font/bootstrap-icons.css')
+        .pipe(dest('./dist/css'))
+        .pipe(browser.stream());
+}
+
+export function copyBootstrapIconsFonts() {
+    return src([
+        'node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff',
+        'node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2',
+    ])
+        .pipe(dest('./dist/css/fonts'))
         .pipe(browser.stream());
 }
 
@@ -134,8 +143,8 @@ export function openBrowser(cb) {
 
 export { watchFiles as watch };
 
-const dev = series(clean, parallel(ejs, style, script, scriptPlugin), openBrowser);
+const dev = series(clean, parallel(ejs, style, script, scriptPlugin, copyBootstrapIcons, copyBootstrapIconsFonts), openBrowser);
 
 export default dev;
 
-exports.build = series(clean, parallel(ejs, style, script, scriptPlugin));
+exports.build = series(clean, parallel(ejs, style, script, scriptPlugin, copyBootstrapIcons, copyBootstrapIconsFonts));
